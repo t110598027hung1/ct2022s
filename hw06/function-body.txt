@@ -1,0 +1,33 @@
+function morph(commands, unicode, defaultUPM){
+    //Function name must be "morph"
+    var minNumber = (defaultUPM >> (defaultUPM.toString(2).length-2))*(-10);
+    var maxNumber = (defaultUPM >> (defaultUPM.toString(2).length-2))*10;
+    var centerPoint = [defaultUPM / 2, defaultUPM / 2];
+    for(var i=0;i<commands.length;i++){
+        var cmd = commands[i];
+        if(typeof cmd.x == 'undefined' && cmd.code != 'Z') cmd.x = commands[i-1].x;
+        if(typeof cmd.y == 'undefined' && cmd.code != 'Z') cmd.y = commands[i-1].y;
+    }
+    for(var i=0;i<commands.length;i++){
+        var cmd = commands[i];
+        var scale = 1.3;
+        var pointNames = ['x1,y1', 'x2,y2'];
+        for(var j=0; j<pointNames.length; j++){
+            var pointName = pointNames[j].split(',');
+            var vector2D = [
+                cmd[pointName[0][0]] - centerPoint[pointName[0].charCodeAt(0)-120],
+                cmd[pointName[1][0]] - centerPoint[pointName[1].charCodeAt(0)-120]
+            ];
+            var newPoint = [
+                centerPoint[0] + scale * vector2D[0],
+                centerPoint[1] + scale * vector2D[1]
+            ];
+            if(!isNaN(newPoint[0]) && !isNaN(newPoint[1])){
+                cmd[pointName[0]] = newPoint[0].toFixed(2);
+                cmd[pointName[1]] = newPoint[1].toFixed(2);
+            }
+        }
+    }
+    //You Must return an array, first element is path commands, second element is upm(optimal)
+    return [ commands ] ;
+};
